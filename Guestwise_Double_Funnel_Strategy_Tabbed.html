@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guestwise Double Funnel Strategy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #3D1F5C 0%, #2a1547 100%);
+            color: white;
+            padding: 30px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container img {
+            max-width: 250px;
+            height: auto;
+        }
+        
+        .header-title {
+            text-align: right;
+        }
+        
+        .header-title h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .header-title p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            background: white;
+            border-bottom: 3px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .tab-nav-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 40px;
+        }
+        
+        .tab-button {
+            padding: 20px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+        }
+        
+        .tab-button:hover {
+            color: #00D4AA;
+            background: #f8f9fa;
+        }
+        
+        .tab-button.active {
+            color: #3D1F5C;
+            border-bottom-color: #00D4AA;
+            background: white;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 3em;
+            color: #3D1F5C;
+            margin-bottom: 15px;
+        }
+        
+        .section-header p {
+            font-size: 1.3em;
+            color: #6c757d;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Context Box */
+        .context-box {
+            background: #e8f9f5;
+            border-left: 5px solid #00D4AA;
+            padding: 30px;
+            margin-bottom: 50px;
+            border-radius: 10px;
+        }
+        
+        .context-box h3 {
+            color: #00685a;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+        
+        .context-box p {
+            color: #00685a;
+            line-height: 1.7;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        /* Funnel Illustration */
+        .funnel-illustration {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+        }
+        
+        .funnel-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 80px;
+            flex-wrap: wrap;
+        }
+        
+        .funnel-shape {
+            text-align: center;
+        }
+        
+        .funnel-shape svg {
+            width: 220px;
+            height: 280px;
+        }
+        
+        .funnel-label {
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 1.3em;
+        }
+        
+        .funnel-label.abm {
+            color: #00D4AA;
+        }
+        
+        .funnel-label.demand {
+            color: #3D1F5C;
+        }
+        
+        .funnel-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 8px;
+            color: white;
+        }
+        
+        .funnel-badge.primary {
+            background: #00D4AA;
+        }
+        
+        .funnel-badge.supporting {
+            background: #3D1F5C;
+        }
+        
+        .connector-arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .arrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #6c757d;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .arrow svg {
+            width: 70px;
+            height: 25px;
+        }
+        
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .comparison-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-card.before {
+            border-top: 5px solid #dc3545;
+        }
+        
+        .comparison-card.after {
+            border-top: 5px solid #00D4AA;
+        }
+        
+        .comparison-card h3 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+        
+        .comparison-card.before h3 {
+            color: #dc3545;
+        }
+        
+        .comparison-card.after h3 {
+            color: #00D4AA;
+        }
+        
+        .comparison-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .comparison-list li {
+            padding: 12px 0 12px 30px;
+            position: relative;
+            line-height: 1.6;
+            color: #495057;
+        }
+        
+        .comparison-list.problems li:before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        
+        .comparison-list.solutions li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00D4AA;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        
+        /* Funnel Detail Card */
+        .funnel-detail {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .funnel-detail.abm {
+            border-top: 5px solid #00D4AA;
+        }
+        
+        .funnel-detail.demand {
+            border-top: 5px solid #3D1F5C;
+        }
+        
+        .funnel-detail h3 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .funnel-detail .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 25px;
+        }
+        
+        .funnel-detail.abm .badge {
+            background: #00D4AA;
+        }
+        
+        .funnel-detail.demand .badge {
+            background: #3D1F5C;
+        }
+        
+        .funnel-stage {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+        
+        .funnel-detail.abm .funnel-stage {
+            border-left-color: #00D4AA;
+        }
+        
+        .funnel-detail.demand .funnel-stage {
+            border-left-color: #3D1F5C;
+        }
+        
+        .stage-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2a1547;
+        }
+        
+        .stage-tactics {
+            list-style: none;
+        }
+        
+        .stage-tactics li {
+            padding: 8px 0 8px 20px;
+            position: relative;
+            color: #495057;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+        
+        .stage-tactics li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: #00D4AA;
+        }
+        
+        .funnel-detail.demand .stage-tactics li:before {
+            color: #3D1F5C;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .metrics-box {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .metrics-box h3 {
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+        }
+        
+        .metrics-box.abm h3 {
+            border-color: #00D4AA;
+            color: #00D4AA;
+        }
+        
+        .metrics-box.demand h3 {
+            border-color: #3D1F5C;
+            color: #3D1F5C;
+        }
+        
+        .metric-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.05em;
+        }
+        
+        .metric-target {
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+        
+        /* Timeline */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .timeline-phase {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-top: 5px solid #00D4AA;
+        }
+        
+        .timeline-phase h3 {
+            color: #3D1F5C;
+            margin-bottom: 10px;
+            font-size: 1.7em;
+        }
+        
+        .timeline-phase .subtitle {
+            color: #6c757d;
+            font-style: italic;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+        
+        .timeline-phase ul {
+            list-style: none;
+        }
+        
+        .timeline-phase li {
+            padding: 8px 0 8px 20px;
+            position: relative;
+            color: #495057;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .timeline-phase li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00D4AA;
+            font-weight: bold;
+        }
+        
+        /* Key Insight Box */
+        .key-insight {
+            background: linear-gradient(135deg, #00D4AA 0%, #3D1F5C 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 15px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .key-insight h3 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+        }
+        
+        .key-insight p {
+            font-size: 1.25em;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #3D1F5C;
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        /* Responsive */
+        @media (max-width: 968px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .header-title {
+                text-align: center;
+            }
+            
+            .tab-nav-wrapper {
+                overflow-x: auto;
+            }
+            
+            .tab-button {
+                white-space: nowrap;
+                padding: 15px 20px;
+            }
+            
+            .comparison-grid,
+            .metrics-grid,
+            .timeline-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .funnel-diagram {
+                flex-direction: column;
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="file:///mnt/user-data/uploads/guestwise-purple-logo.png" alt="Guestwise" onerror="this.style.display='none'">
+            </div>
+            <div class="header-title">
+                <h1>Double Funnel Strategy</h1>
+                <p>ABM-First Marketing Approach for Concentrated Markets</p>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+        <div class="tab-nav-wrapper">
+            <button class="tab-button active" onclick="openTab(event, 'overview')">Overview</button>
+            <button class="tab-button" onclick="openTab(event, 'why')">Why Double Funnel?</button>
+            <button class="tab-button" onclick="openTab(event, 'abm')">ABM Strategy</button>
+            <button class="tab-button" onclick="openTab(event, 'demandgen')">Demand Gen Strategy</button>
+            <button class="tab-button" onclick="openTab(event, 'metrics')">Success Metrics</button>
+            <button class="tab-button" onclick="openTab(event, 'timeline')">Timeline & Budget</button>
+        </div>
+    </nav>
+    
+    <!-- Tab 1: Overview -->
+    <div id="overview" class="tab-content active">
+        <div class="content-wrapper">
+            <div class="section-header">
+                <h2>Strategic Overview</h2>
+                <p>Understanding the unique approach for a concentrated market</p>
+            </div>
+            
+            <div class="context-box">
+                <h3>The Market Reality</h3>
+                <p>Guestwise operates in a highly concentrated market with only <strong>~100 target companies</strong> in the UK hospitality sector—multi-site restaurant and pub groups with 25+ locations. This market reality requires a fundamentally different approach than traditional B2B SaaS marketing.</p>
+                <p>Rather than casting a wide net and hoping prospects find you, this strategy systematically engages every target account with personalized messaging while building the brand presence and thought leadership that makes outreach welcomed rather than ignored.</p>
+            </div>
+            
+            <div class="funnel-illustration">
+                <h3 style="text-align: center; margin-bottom: 40px; color: #3D1F5C; font-size: 2.2em;">The Double Funnel Model</h3>
+                <div class="funnel-diagram">
+                    <!-- ABM Funnel -->
+                    <div class="funnel-shape">
+                        <svg viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 20 20 L 200 20 L 155 130 L 135 260 L 85 260 L 65 130 Z" 
+                                  fill="#00D4AA" opacity="0.2" stroke="#00D4AA" stroke-width="3"/>
+                            <line x1="30" y1="45" x2="190" y2="45" stroke="#00D4AA" stroke-width="2.5"/>
+                            <line x1="45" y1="80" x2="175" y2="80" stroke="#00D4AA" stroke-width="2.5"/>
+                            <line x1="55" y1="115" x2="165" y2="115" stroke="#00D4AA" stroke-width="2.5"/>
+                            <line x1="65" y1="150" x2="155" y2="150" stroke="#00D4AA" stroke-width="2.5"/>
+                            <line x1="75" y1="185" x2="145" y2="185" stroke="#00D4AA" stroke-width="2.5"/>
+                            <line x1="85" y1="225" x2="135" y2="225" stroke="#00D4AA" stroke-width="2.5"/>
+                            <circle cx="110" cy="12" r="10" fill="#00D4AA"/>
+                            <circle cx="110" cy="12" r="6" fill="white"/>
+                            <circle cx="110" cy="12" r="2" fill="#00D4AA"/>
+                        </svg>
+                        <div class="funnel-label abm">ABM Engine</div>
+                        <div class="funnel-badge primary">PRIMARY STRATEGY</div>
+                    </div>
+                    
+                    <!-- Connecting Arrows -->
+                    <div class="connector-arrows">
+                        <div class="arrow">
+                            <span>Content feeds ABM</span>
+                            <svg viewBox="0 0 70 25" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="5" y1="12" x2="60" y2="12" stroke="#6c757d" stroke-width="2"/>
+                                <polygon points="60,8 60,16 68,12" fill="#6c757d"/>
+                            </svg>
+                        </div>
+                        <div class="arrow">
+                            <svg viewBox="0 0 70 25" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="10" y1="12" x2="60" y2="12" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,5"/>
+                                <polygon points="5,8 5,16 2,12" fill="#6c757d"/>
+                                <polygon points="60,8 60,16 68,12" fill="#6c757d"/>
+                            </svg>
+                            <span>Two-way sync</span>
+                        </div>
+                        <div class="arrow">
+                            <svg viewBox="0 0 70 25" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="10" y1="12" x2="60" y2="12" stroke="#6c757d" stroke-width="2"/>
+                                <polygon points="10,8 10,16 2,12" fill="#6c757d"/>
+                            </svg>
+                            <span>Signals trigger ABM</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Demand Gen Funnel -->
+                    <div class="funnel-shape">
+                        <svg viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 20 20 L 200 20 L 155 130 L 135 260 L 85 260 L 65 130 Z" 
+                                  fill="#3D1F5C" opacity="0.2" stroke="#3D1F5C" stroke-width="3"/>
+                            <line x1="30" y1="55" x2="190" y2="55" stroke="#3D1F5C" stroke-width="2.5"/>
+                            <line x1="50" y1="110" x2="170" y2="110" stroke="#3D1F5C" stroke-width="2.5"/>
+                            <line x1="70" y1="170" x2="150" y2="170" stroke="#3D1F5C" stroke-width="2.5"/>
+                            <line x1="90" y1="225" x2="130" y2="225" stroke="#3D1F5C" stroke-width="2.5"/>
+                            <path d="M 95 5 L 125 5 L 132 18 L 88 18 Z" fill="#3D1F5C"/>
+                            <circle cx="110" cy="14" r="4" fill="white"/>
+                        </svg>
+                        <div class="funnel-label demand">Demand Gen Engine</div>
+                        <div class="funnel-badge supporting">SUPPORTING STRATEGY</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="context-box">
+                <h3>How They Work Together</h3>
+                <p>Content from demand gen feeds ABM campaigns. Warm audiences become ad targets. Inbound signals trigger ABM sequences. Social proof supports outreach. Thought leadership builds credibility. These aren't parallel strategies—they're deeply integrated, with each amplifying the other to create something neither could achieve alone.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 2: Why Double Funnel? -->
+    <div id="why" class="tab-content">
+        <div class="content-wrapper">
+            <div class="section-header">
+                <h2>Why Double Funnel?</h2>
+                <p>Understanding the strategic shift from traditional demand generation</p>
+            </div>
+            
+            <div class="comparison-grid">
+                <div class="comparison-card before">
+                    <h3>❌ Traditional Approach</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px; font-size: 1.1em;">Generic B2B SaaS demand generation</p>
+                    <ul class="comparison-list problems">
+                        <li>Designed for markets with 10,000+ potential customers, not 100</li>
+                        <li>Relies on prospects finding you through search and ads</li>
+                        <li>Wastes budget reaching thousands of irrelevant people</li>
+                        <li>Generic messaging treats all prospects the same</li>
+                        <li>Reactive approach—waiting for interest</li>
+                        <li>Marketing and sales operate independently</li>
+                        <li>Focuses on vanity metrics like MQLs instead of pipeline</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-card after">
+                    <h3>✅ Double Funnel Approach</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px; font-size: 1.1em;">ABM-first with demand gen support</p>
+                    <ul class="comparison-list solutions">
+                        <li>Built specifically for 100 known target accounts</li>
+                        <li>Proactively reaches every target company systematically</li>
+                        <li>Every pound targets exact decision-makers who matter</li>
+                        <li>Deep personalization with account-specific messaging</li>
+                        <li>Strategic approach—creates urgency intentionally</li>
+                        <li>Perfect coordination between marketing and sales</li>
+                        <li>Real metrics: account coverage, conversations, pipeline value</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="key-insight">
+                <h3>💡 Core Principle</h3>
+                <p>With only 100 target companies, you don't need a wider net—you need precision. ABM ensures systematic engagement with every high-value account while demand generation creates the "surround sound" that makes your outreach welcomed rather than ignored. That's the power of the double funnel: <strong>precision + presence working together.</strong></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 3: ABM Strategy -->
+    <div id="abm" class="tab-content">
+        <div class="content-wrapper">
+            <div class="section-header">
+                <h2>ABM Engine</h2>
+                <p>Systematic approach to engaging all 100 target accounts</p>
+            </div>
+            
+            <div class="funnel-detail abm">
+                <h3>🎯 Account-Based Marketing</h3>
+                <span class="badge">PRIMARY STRATEGY</span>
+                <p style="color: #6c757d; margin-bottom: 30px; font-size: 1.15em;">The ABM engine is the core of this strategy—systematically working through every target account with personalized, multi-touch campaigns coordinated across LinkedIn, email, events, and direct outreach.</p>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🔍 Account Selection & Research</div>
+                    <ul class="stage-tactics">
+                        <li>Finalize list of 100 target accounts with website URLs</li>
+                        <li>Research key decision-makers via LinkedIn (CMO, Finance Director, Commercial Director)</li>
+                        <li>Enrich data using Clay (company news, tech stack, recent funding)</li>
+                        <li>Segment by priority: Tier 1 (20 accounts), Tier 2 (30 accounts), Tier 3 (50 accounts)</li>
+                        <li>Identify current pain points and triggers (hiring freeze, expansion news)</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🔥 Account Warming (Weeks 1-4)</div>
+                    <ul class="stage-tactics">
+                        <li>Thought Leader Ads target decision-makers at all 100 accounts</li>
+                        <li>Founders engage with prospects' LinkedIn content organically</li>
+                        <li>Create "surround sound"—prospects see Guestwise everywhere</li>
+                        <li>Track website visits from target accounts with retargeting pixels</li>
+                        <li>Goal: 70%+ of target accounts have seen content before outreach begins</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">📨 Multi-Touch Outreach (Weeks 5-8)</div>
+                    <ul class="stage-tactics">
+                        <li>Personalized LinkedIn connection requests from founders (reference company-specific insights)</li>
+                        <li>Follow-up DMs share relevant content (case studies, ROI calculator)</li>
+                        <li>3-4 touch email campaigns using Clay automation</li>
+                        <li>Thought Leader Ads continue throughout sequences for consistent visibility</li>
+                        <li>Phone outreach added for Tier 1 accounts</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🤝 High-Touch Engagement (Weeks 9-12)</div>
+                    <ul class="stage-tactics">
+                        <li>Executive events: Industry dinners at high-end venues</li>
+                        <li>Invitation-only CMO peer roundtables on key topics</li>
+                        <li>Personalized video messages from founders to engaged accounts</li>
+                        <li>Physical direct mail: Holiday Marketing Playbook sent to top 20 accounts</li>
+                        <li>Account-specific LinkedIn video ad campaigns for engaged prospects</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">💎 Demo & Proof of Value</div>
+                    <ul class="stage-tactics">
+                        <li>Personalized demos showing solutions to their specific data fragmentation challenges</li>
+                        <li>Free marketing efficiency audits for serious prospects</li>
+                        <li>Customer introductions (Mitchell & Butler) for reference calls</li>
+                        <li>Custom ROI modeling showing cost replacement vs. hiring a marketing executive</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🏆 Close & Expand</div>
+                    <ul class="stage-tactics">
+                        <li>Pilot programs starting with 5-10 locations to prove value</li>
+                        <li>Finance Director approval process focused on ROI</li>
+                        <li>Phased rollout: Web Optimization → Email/Social → Full Platform</li>
+                        <li>Success tracking and documentation for future case studies</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage" style="background: #e8f9f5;">
+                    <div class="stage-title">🔄 Continuous Nurture</div>
+                    <ul class="stage-tactics">
+                        <li>Not ready yet? Add to monthly newsletter for ongoing engagement</li>
+                        <li>Quarterly re-engagement campaigns with new content and offers</li>
+                        <li>Ongoing event invitations to maintain relationships</li>
+                        <li>Patience for 3-6 month sales cycles tied to budget years</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 4: Demand Gen Strategy -->
+    <div id="demandgen" class="tab-content">
+        <div class="content-wrapper">
+            <div class="section-header">
+                <h2>Demand Gen Engine</h2>
+                <p>Building brand presence and creating content assets for ABM</p>
+            </div>
+            
+            <div class="funnel-detail demand">
+                <h3>📢 Demand Generation</h3>
+                <span class="badge">SUPPORTING STRATEGY</span>
+                <p style="color: #6c757d; margin-bottom: 30px; font-size: 1.15em;">The demand gen engine creates the "surround sound" effect—building founder thought leadership, generating educational content, and creating warm audiences that make ABM outreach significantly more effective.</p>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">📱 Build Awareness</div>
+                    <ul class="stage-tactics">
+                        <li>8 LinkedIn posts per week from founders Carey & Aden (4 posts each)</li>
+                        <li>Thought Leader Ads amplify top-performing organic content to target audiences</li>
+                        <li>Educational blog posts: hospitality marketing guides and how-tos</li>
+                        <li>Industry events: Propel sponsorships, speaking opportunities</li>
+                        <li>Founder story video: "Why We Built Guestwise" (ungated for maximum reach)</li>
+                        <li>Goal: Build recognition and credibility before any sales touches</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🧲 Capture Interest</div>
+                    <ul class="stage-tactics">
+                        <li>Holiday Marketing Playbook: 90-Day Christmas Campaign Planner for restaurants</li>
+                        <li>State of Hospitality Marketing Report: 2025 benchmarks, trends, and predictions</li>
+                        <li>ROI Calculator: Interactive Marketing Efficiency Score tool</li>
+                        <li>Mitchell & Butler case study: Customer story video and written Q&A format</li>
+                        <li>Executive webinar series: "Office Hours" with Carey & Aden (invitation-only)</li>
+                        <li>Monthly newsletter: Hospitality marketing insights and industry news</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🎯 Drive Conversion</div>
+                    <ul class="stage-tactics">
+                        <li>Demo pages with clear expectations, testimonials, and video previews</li>
+                        <li>Interactive self-serve platform tours showing key features</li>
+                        <li>Persona-specific landing pages: Finance Director vs CMO messaging</li>
+                        <li>Free marketing audits offered to qualified prospects only</li>
+                        <li>Short-form customer testimonial videos for social proof</li>
+                        <li>Platform comparison guides: Guestwise vs alternatives (gated PDF)</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage" style="background: #f3f0f7;">
+                    <div class="stage-title">♻️ Retargeting</div>
+                    <ul class="stage-tactics">
+                        <li>Website visitors: Problem awareness content → case studies → demo CTA</li>
+                        <li>Content downloaders: Related content → webinar invitation → demo offer</li>
+                        <li>Video viewers: Customer stories → platform explainer → demo booking</li>
+                        <li>LinkedIn engagers: Long-form content → newsletter signup → demo nurture</li>
+                        <li>Budget allocation: £500/month initially, scaling to £1,250/month by Month 6</li>
+                    </ul>
+                </div>
+                
+                <div class="funnel-stage">
+                    <div class="stage-title">🎓 Thought Leadership</div>
+                    <ul class="stage-tactics">
+                        <li>Build Carey & Aden's personal brands as hospitality industry experts</li>
+                        <li>Content mix: Startup journey + tech insights + hospitality wisdom</li>
+                        <li>Authentic behind-the-scenes founder content showing vulnerability</li>
+                        <li>Industry commentary: React to hospitality news and trends in real-time</li>
+                        <li>Customer spotlight interviews: Feature customers discussing their challenges</li>
+                        <li>Tone: Educational and supportive, never making prospects feel inadequate</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 5: Success Metrics -->
+    <div id="metrics" class="tab-content">
+        <div class="content-wrapper">
+            <div class="section-header">
+                <h2>Success Metrics</h2>
+                <p>Measuring what matters for each engine</p>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metrics-box abm">
+                    <h3>🎯 ABM Metrics</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px;">Primary metrics for measuring ABM effectiveness</p>
+                    <div class="metric-item">
+                        <span class="metric-label">Target Account Coverage</span>
+                        <span class="metric-target">Goal: 80%+ seeing ads</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Outreach Completion</span>
+                        <span class="metric-target">Goal: 100% contacted in 3 months</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Active Conversations</span>
+                        <span class="metric-target">Goal: 20-30% of target accounts</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Qualified Pipeline</span>
+                        <span class="metric-target">Goal: 5-8 demos/month combined</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Account Engagement Score</span>
+                        <span class="metric-target">Track touches across all channels</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Event Attendance</span>
+                        <span class="metric-target">Goal: 15-20 target prospects per event</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Sales Cycle Length</span>
+                        <span class="metric-target">Track reduction from 3-6 months</span>
+                    </div>
+                </div>
+                
+                <div class="metrics-box demand">
+                    <h3>📢 Demand Gen Metrics</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px;">Supporting metrics for content and brand building</p>
+                    <div class="metric-item">
+                        <span class="metric-label">LinkedIn Engagement Rate</span>
+                        <span class="metric-target">Goal: >1% on Thought Leader Ads</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Organic Post Performance</span>
+                        <span class="metric-target">Track best-performing content themes</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Content Downloads</span>
+                        <span class="metric-target">Holiday Playbook, Reports, Guides</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Retargeting Audience Size</span>
+                        <span class="metric-target">Goal: 500+ engaged users</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Website Traffic from Targets</span>
+                        <span class="metric-target">Track company-level visits</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Email Subscriber Growth</span>
+                        <span class="metric-target">Quality over quantity focus</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Inbound Demo Requests</span>
+                        <span class="metric-target">Supplement ABM pipeline</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="key-insight">
+                <h3>📊 Measuring What Matters</h3>
+                <p>ABM metrics focus on account-level engagement and pipeline quality. We track how many of the 100 target accounts we've reached, engaged, and converted—not just lead volume. Demand gen metrics ensure we're building the brand presence and content library that makes ABM effective. Together, they give us a complete picture of strategy performance.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab 6: Timeline & Budget -->
+    <div id="timeline" class="tab-content">
+        <div class="content-wrapper">
+            <div class="section-header">
+                <h2>Timeline & Budget</h2>
+                <p>A strategic 6-month implementation plan</p>
+            </div>
+            
+            <div class="timeline-grid">
+                <div class="timeline-phase">
+                    <h3>Phase 1: Months 1-2</h3>
+                    <p class="subtitle">Foundation & Warming</p>
+                    <ul>
+                        <li>Finalize 100 target account list with URLs</li>
+                        <li>Research & enrich data via Clay</li>
+                        <li>Launch Thought Leader Ads</li>
+                        <li>Organic LinkedIn engagement begins</li>
+                        <li>Create initial lead magnets</li>
+                        <li>Set up website retargeting pixels</li>
+                        <li>Budget: £2,500/month (LinkedIn only)</li>
+                    </ul>
+                </div>
+                
+                <div class="timeline-phase">
+                    <h3>Phase 2: Months 3-4</h3>
+                    <p class="subtitle">Outreach & Engagement</p>
+                    <ul>
+                        <li>Launch Clay-powered outreach sequences</li>
+                        <li>Begin personalized LinkedIn outreach</li>
+                        <li>Execute industry events strategy</li>
+                        <li>Create Mitchell & Butler case study</li>
+                        <li>Publish State of Hospitality Report</li>
+                        <li>Shift to 70/30 budget split</li>
+                        <li>Consider adding Meta for retargeting</li>
+                    </ul>
+                </div>
+                
+                <div class="timeline-phase">
+                    <h3>Phase 3: Months 5-6</h3>
+                    <p class="subtitle">Scale & Optimize</p>
+                    <ul>
+                        <li>Re-engage non-responders with new offers</li>
+                        <li>Executive roundtables for engaged accounts</li>
+                        <li>Account-specific video messages for Tier 1</li>
+                        <li>Launch newsletter for nurture</li>
+                        <li>Shift to 50/50 budget split</li>
+                        <li>Evaluate Meta/Google expansion</li>
+                        <li>Optimize based on performance data</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="context-box">
+                <h3>💰 Budget Allocation Strategy</h3>
+                <p><strong>Months 1-2 (80/20 Split):</strong> £2,000 prospecting / £500 retargeting — Focus on building awareness and creating warm audiences within target accounts</p>
+                <p><strong>Months 3-4 (70/30 Split):</strong> £1,750 prospecting / £750 retargeting — Shift budget as engaged audiences grow and require more nurture touches</p>
+                <p><strong>Months 5-6 (50/50 Split):</strong> £1,250 prospecting / £1,250 retargeting — Balance for nurturing known prospects and overcoming lack of urgency with repeated exposure</p>
+            </div>
+            
+            <div class="context-box" style="background: #f3f0f7; border-left-color: #3D1F5C;">
+                <h3>📅 Expected Outcomes Timeline</h3>
+                <p><strong>Week 2-3:</strong> First engagement signals (target accounts viewing ads, engaging with content)</p>
+                <p><strong>Week 4-6:</strong> First direct conversations from outreach sequences</p>
+                <p><strong>Week 6-8:</strong> First qualified demos booked</p>
+                <p><strong>Month 3-4:</strong> First deals close (given 3-6 month sales cycles)</p>
+                <p><strong>Month 6:</strong> 70+ target accounts engaged, 20-30 in active conversations, solid pipeline established</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>Guestwise Double Funnel Strategy</strong> | Developed by Rocket SaaS | 2025</p>
+        <p style="margin-top: 10px;">Confidential - For Guestwise Internal Use Only</p>
+    </footer>
+    
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            var tabContent = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+            }
+            
+            // Remove active class from all tab buttons
+            var tabButtons = document.getElementsByClassName("tab-button");
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+            
+            // Show the selected tab and mark button as active
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
